@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             mAuth = FirebaseAuth.getInstance();
             GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder()
-                    .requestIdToken("9278359184-bbpsfifd5nck9kd0jus7j156k7o904ql.apps.googleusercontent.com")
+                    .requestIdToken("9278359184-nfp9acofp3gjj2emqk3j8rcoetrnlmrt.apps.googleusercontent.com")
                     .requestEmail()
                     .build();
             mGoogleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions);
@@ -83,12 +83,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
+
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try{
+            try {
+                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                if (account != null) firebaseAuthWithGoogle(account);
-            }catch(ApiException e){
-                e.printStackTrace();
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+                // ...
             }
         }
 
@@ -102,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i(TAG, "firebaseAuthWithGoogle: Sign in It's Successful!");
             }else{
                 Log.i(TAG, "firebaseAuthWithGoogle: Sign in failure");
+
             }
         });
     }
