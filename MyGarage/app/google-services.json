@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "9278359184",
+    "firebase_url": "https://my-garage-b4683.firebaseio.com",
+    "project_id": "my-garage-b4683",
+    "storage_bucket": "my-garage-b4683.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:9278359184:android:51d2b46526777a3a",
+        "android_client_info": {
+          "package_name": "com.storerjoseph.mygarage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "9278359184-bbpsfifd5nck9kd0jus7j156k7o904ql.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.storerjoseph.mygarage",
+            "certificate_hash": "54aacc43eea2fa688180c62786c575c38b18b372"
+          }
+        },
+        {
+          "client_id": "9278359184-nfp9acofp3gjj2emqk3j8rcoetrnlmrt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWaiR0TGacuEHjxx3SG-2UgTGJDgk7EmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "9278359184-nfp9acofp3gjj2emqk3j8rcoetrnlmrt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
