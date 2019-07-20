@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth mAuth;
+    private GoogleSignInAccount usersAccount;
+    public static final String Garage_EXTRA = "MyGarage.Storer.account.extra";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +103,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.i(TAG, "firebaseAuthWithGoogle: Auth with Google " + account.getEmail());
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+
         mAuth.signInWithCredential(credential).addOnCompleteListener(this,task ->{
             if (task.isSuccessful()) {
                 Log.i(TAG, "firebaseAuthWithGoogle: Sign in It's Successful!");
+                usersAccount = account;
+                // lets proceed to our actual garage view
+                Intent garageIntent = new Intent(this,GarageActivity.class);
+                garageIntent.putExtra(Garage_EXTRA,account);
+                startActivity(garageIntent);
             }else{
                 Log.i(TAG, "firebaseAuthWithGoogle: Sign in failure");
 
