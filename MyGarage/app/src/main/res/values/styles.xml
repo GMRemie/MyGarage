@@ -17,4 +17,28 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <style name="GarageTheme">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="GarageTheme.Header2">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="GarageTheme.EditText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAlignment">textStart</item>
+    </style>
+
+
+    <style name="GarageTheme.Button">
+        <item name="android:textSize">20sp</item>
+        <item name="android:verticalSpacing">20dp</item>
+    </style>
+
 </resources>

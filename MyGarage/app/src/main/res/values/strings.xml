@@ -2,4 +2,9 @@
     <string name="app_name">My Garage</string>
     <string name="action_settings">Settings</string>
     <string name="my_garage">My Garage</string>
+    <string name="create_vehicle">Create Vehicle</string>
+    <string name="vehicle_vin">Vehicle VIN#</string>
+    <string name="veh_vin_hint">Vehicles VIN</string>
+    <string name="vehicle_nickname">Vehicle Nickname</string>
+    <string name="vehicles_nickname_hint">Vehicles Nickname</string>
 </resources>
