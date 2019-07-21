@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="@android:color/background_light"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/GarageTheme.Header2"
+        android:text="@string/vehicle_nickname"
+        />
+    <EditText
+        android:id="@+id/vehicleNick"
+        style="@style/GarageTheme.EditText"
+        android:hint="@string/vehicles_nickname_hint"/>
+
+    <TextView
+        style="@style/GarageTheme.Header2"
+        android:text="@string/vehicle_vin"
+        android:paddingTop="30dp"/>
+    <EditText
+        android:id="@+id/vehicleVIN"
+        style="@style/GarageTheme.EditText"
+        android:hint="@string/veh_vin_hint" />
+
+    <Button
+        android:id="@+id/vehicleScan"
+        style="@style/GarageTheme.Button"
+        android:text="Scan VIN"
+        />
+
+    <Button
+        android:id="@+id/saveVehicle"
+        style="@style/GarageTheme.Button"
+        android:text="Save"/>
+
+</LinearLayout>
