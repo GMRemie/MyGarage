@@ -53,8 +53,8 @@ public class GarageActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            Log.i(TAG, "onClick: Fab clicked");
-            getSupportFragmentManager().beginTransaction().add(R.id.fragView,AddFragment.newInstance()).addToBackStack("backstack").commit();
+            Log.i(TAG, "onClick: Fab clicked + " + account.getEmail());
+            getSupportFragmentManager().beginTransaction().add(R.id.fragView,AddFragment.newInstance(account)).addToBackStack("backstack").commit();
             v.setVisibility(View.INVISIBLE);
 
         }
