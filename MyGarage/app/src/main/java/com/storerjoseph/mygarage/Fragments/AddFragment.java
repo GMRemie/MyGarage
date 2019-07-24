@@ -1,5 +1,10 @@
 package com.storerjoseph.mygarage.Fragments;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +29,9 @@ public class AddFragment extends Fragment implements View.OnClickListener {
     private GoogleSignInAccount account;
     private FirebaseDatabase database;
     private DatabaseReference dataRef;
-    
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+
     public static AddFragment newInstance(GoogleSignInAccount account) {
         
         Bundle args = new Bundle();
@@ -37,9 +44,8 @@ public class AddFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
+
 
     @Nullable
     @Override
@@ -60,6 +66,7 @@ public class AddFragment extends Fragment implements View.OnClickListener {
 
         getActivity().setTitle("Create Vehicle");
         getActivity().findViewById(R.id.saveVehicle).setOnClickListener(this);
+        getActivity().findViewById(R.id.vehicleScan).setOnClickListener(this);
 
     }
 
@@ -74,6 +81,25 @@ public class AddFragment extends Fragment implements View.OnClickListener {
             Vehicle vehicle = new Vehicle(vehicleNick.getText().toString(),vehicleVin.getText().toString());
             dataRef.child("vehicles").push().setValue(vehicle);
         }else{
+            // get an image
+            if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+            }
+            else
+            {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
+        {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
         }
     }
 }
