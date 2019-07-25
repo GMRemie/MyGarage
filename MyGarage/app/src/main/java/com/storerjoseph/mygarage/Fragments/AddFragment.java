@@ -11,16 +11,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.storerjoseph.mygarage.R;
 import com.storerjoseph.mygarage.Vehicle;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class AddFragment extends Fragment implements View.OnClickListener {
 
@@ -100,6 +111,53 @@ public class AddFragment extends Fragment implements View.OnClickListener {
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK)
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
+            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(photo);
+            FirebaseVisionTextRecognizer detector = FirebaseVision.getInstance()
+                    .getOnDeviceTextRecognizer();
+            // disable buttons
+            detector.processImage(image)
+                    .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                        @Override
+                        public void onSuccess(FirebaseVisionText texts) {
+                            processTextRecognitionResult(texts);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.i(TAG, "onFailure: Text recognition failed!");
+                            Toast.makeText(getContext(),"Text recognition failed!",LENGTH_SHORT).show();
+
+                            e.printStackTrace();
+                        }
+                    });
+
         }
+    }
+
+    private void processTextRecognitionResult(FirebaseVisionText texts){
+        List<FirebaseVisionText.TextBlock> blocks = texts.getTextBlocks();
+        if(blocks.size() == 0){
+            Log.i(TAG, "processTextRecognitionResult: No Text has been found!");
+            Toast.makeText(getContext(),"No VIN detected!",LENGTH_SHORT).show();
+
+            return;
+        }
+        for (int i = 0; i < blocks.size(); i++){
+            List<FirebaseVisionText.Line> lines = blocks.get(i).getLines();
+            for (int j = 0; j < lines.size(); j++){
+                List<FirebaseVisionText.Element> elements = lines.get(j).getElements();
+                for (int k = 0; k < elements.size(); k++){
+                    Log.i(TAG, "processTextRecognitionResult: Text found " + elements.get(k).getText());
+                    if (elements.get(k).getText().length() == 17){
+                        EditText vintext = getActivity().findViewById(R.id.vehicleVIN);
+                        vintext.setText(elements.get(k).getText());
+                    }else{
+                        Toast.makeText(getContext(),"No VIN detected!",LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+
     }
 }
