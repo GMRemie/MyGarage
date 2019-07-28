@@ -70,10 +70,12 @@ public class GarageActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         setTitle("My Garage");
         fab.show();
 
     }
+
 
 
     FloatingActionButton.OnClickListener fabListener = new FloatingActionButton.OnClickListener(){

@@ -24,6 +24,14 @@
         style="@style/GarageTheme.EditText"
         android:hint="@string/veh_vin_hint" />
 
+    <TextView
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="OR"/>
+
     <Button
         android:id="@+id/vehicleScan"
         style="@style/GarageTheme.Button"
