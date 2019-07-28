@@ -8,7 +8,10 @@
     <ImageView
         android:id="@+id/detailImage"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/carflat"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -77,6 +80,16 @@
                 android:id="@+id/detailTransmission"
                 style="@style/GarageTheme.EditText"
                 android:text="No info"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"/>
+
+            <Button
+                android:id="@+id/shopForParts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Shop For Parts"/>
 
 
         </LinearLayout>

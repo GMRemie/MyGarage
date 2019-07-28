@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class DetailFragment extends Fragment {
 
     private static final String ARG_VEHICLE = "mygarage.passed.vehicle";
     private Vehicle vehicle;
+    private Button shopforparts;
     // CarMD API requirements
     private String carMD_Endpoint = "https://api.carmd.com/v3.0/image?vin=";
     private String carMD_Token = "523b9cded5df4cd8bb564364e3fe8971";
@@ -57,13 +59,22 @@ public class DetailFragment extends Fragment {
         return inflater.inflate(R.layout.vehicle_details,container,false);
     }
 
+    Button.OnClickListener blistener = new Button.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragView,WebView.newInstance(vehicle)).addToBackStack("back").commit();
+        }
+    };
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
         vehicle = (Vehicle) arguments.getSerializable(ARG_VEHICLE);
         getActivity().setTitle(vehicle.nickName);
-
+        shopforparts = getActivity().findViewById(R.id.shopForParts);
+        shopforparts.setOnClickListener(blistener);
         // update detail view
 
 
