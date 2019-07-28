@@ -38,5 +38,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision:22.0.0'
     //implementation 'org.apache.directory.studio:org.apache.commons.io:2.4'
     implementation 'commons-io:commons-io:20030203.000550'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
 apply plugin: 'com.google.gms.google-services'

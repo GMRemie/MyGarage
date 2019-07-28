@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -217,6 +218,7 @@ public class AddFragment extends Fragment implements View.OnClickListener {
             String data = IOUtil.toString(is,"UTF-8");
             is.close();
             connection.disconnect();
+
             return data;
 
         } catch (IOException e){
@@ -249,7 +251,7 @@ public class AddFragment extends Fragment implements View.OnClickListener {
                 String engine = vehdata.getString("engine");
                 String trim = vehdata.getString("trim");
                 String transmission = vehdata.getString("transmission");
-                Vehicle loadedVehicle = new Vehicle(year,make,model,trim,transmission);
+                Vehicle loadedVehicle = new Vehicle(year,make,model,trim,transmission,engine);
                 return loadedVehicle;
 
             }catch (JSONException e){

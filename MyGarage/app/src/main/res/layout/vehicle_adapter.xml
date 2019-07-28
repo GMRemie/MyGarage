@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    >
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/carflat" />
+
+    <LinearLayout
+        android:paddingLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/adapterNick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No nick name"
+            android:textSize="20sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/adapterDetailOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Error loading"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="normal"/>
+        <TextView
+            android:id="@+id/adapterDetailTwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Error loading"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="normal"/>
+    </LinearLayout>
+
+</LinearLayout>

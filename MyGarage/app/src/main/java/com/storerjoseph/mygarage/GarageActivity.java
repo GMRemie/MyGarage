@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.storerjoseph.mygarage.Fragments.AddFragment;
+import com.storerjoseph.mygarage.Fragments.DetailFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +81,8 @@ public class GarageActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Log.i(TAG, "onClick: Fab clicked + " + account.getEmail());
-            getSupportFragmentManager().beginTransaction().add(R.id.fragView,AddFragment.newInstance(account)).addToBackStack("backstack").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragView,AddFragment.newInstance(account)).addToBackStack("back").commit();
             fab.hide();
-
         }
     };
 
@@ -125,7 +125,8 @@ public class GarageActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Vehicle selected = vehicles.get(position);
-
+            fab.hide();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragView, DetailFragment.newInstance(selected)).addToBackStack("back").commit();
         }
     };
 }
