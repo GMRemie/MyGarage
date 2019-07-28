@@ -19,18 +19,14 @@ import com.storerjoseph.mygarage.Fragments.AddFragment;
 import com.storerjoseph.mygarage.Fragments.DetailFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class GarageActivity extends AppCompatActivity {
 
     private GoogleSignInAccount account;
-    public static final String TAG = "GarageActivty";
-    private NetworkClass networkClass;
+    private static final String TAG = "GarageActivty";
     private FloatingActionButton fab;
-    private FirebaseDatabase database;
-    private DatabaseReference dataRef;
     private ArrayList<Vehicle> vehicles;
     private ListView listView;
 
@@ -39,23 +35,23 @@ public class GarageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         Intent launchedIntent = getIntent();
         vehicles = new ArrayList<>();
         listView = findViewById(R.id.listView);
 
         if (launchedIntent.hasExtra(MainActivity.Garage_EXTRA)){
-            account = (GoogleSignInAccount) launchedIntent.getParcelableExtra(MainActivity.Garage_EXTRA);
+            account = launchedIntent.getParcelableExtra(MainActivity.Garage_EXTRA);
         }
 
         // check for network before calling the vehicle lists
-        networkClass = new NetworkClass();
+        NetworkClass networkClass = new NetworkClass();
         if (networkClass.hasConnection(this)){
             // since we have internet let's only set our onclicklistener for our floating action button if we do have internet
             fab.setOnClickListener(fabListener);
             // Load vehicles here
-            database = FirebaseDatabase.getInstance();
-            dataRef = database.getReference(account.getId()).child("vehicles");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference dataRef = database.getReference(account.getId()).child("vehicles");
             dataRef.addValueEventListener(vehListener);
 
         }else{
@@ -78,7 +74,7 @@ public class GarageActivity extends AppCompatActivity {
 
 
 
-    FloatingActionButton.OnClickListener fabListener = new FloatingActionButton.OnClickListener(){
+    private final FloatingActionButton.OnClickListener fabListener = new FloatingActionButton.OnClickListener(){
 
         @Override
         public void onClick(View v) {
@@ -89,7 +85,7 @@ public class GarageActivity extends AppCompatActivity {
     };
 
     // event listener
-    ValueEventListener vehListener = new ValueEventListener() {
+    private final ValueEventListener vehListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             vehicles.removeAll(vehicles);
@@ -122,7 +118,7 @@ public class GarageActivity extends AppCompatActivity {
 
 
 
-    ListView.OnItemClickListener listclickListener = new ListView.OnItemClickListener(){
+    private final ListView.OnItemClickListener listclickListener = new ListView.OnItemClickListener(){
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

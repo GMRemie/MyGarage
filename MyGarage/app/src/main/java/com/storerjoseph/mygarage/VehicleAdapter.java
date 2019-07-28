@@ -1,20 +1,16 @@
 package com.storerjoseph.mygarage;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class VehicleAdapter extends BaseAdapter {
+class VehicleAdapter extends BaseAdapter {
     private static final String TAG = "VehicleAdapter";
     private static final int ID_CONSTANT = 0x010101010;
     private final ArrayList<Vehicle> vehicles;

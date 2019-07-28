@@ -1,12 +1,9 @@
 package com.storerjoseph.mygarage.Fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ConsoleMessage;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 
@@ -22,7 +19,6 @@ import androidx.fragment.app.Fragment;
 public class WebView extends Fragment {
 
     private static final String ARG_VEHICLE = "mygarage.passed.vehicle";
-    private String carIDUrl = "https://www.carid.com/";
 
     public static WebView newInstance(Vehicle vehicle) {
 
@@ -54,6 +50,7 @@ public class WebView extends Fragment {
 
     private void setupWebView(Vehicle vehicle){
         android.webkit.WebView webView = getActivity().findViewById(R.id.webViews);
+        String carIDUrl = "https://www.carid.com/";
         String actualUrl = carIDUrl + "/" + vehicle.year.toString() + "-" + vehicle.make + "-" + vehicle.model + "-accessories/";
 
         // ENABLE JS

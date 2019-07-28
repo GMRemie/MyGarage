@@ -1,8 +1,6 @@
 package com.storerjoseph.mygarage;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -16,8 +14,7 @@ public class NetworkClass {
 
             NetworkInfo info = manager.getActiveNetworkInfo();
             if(info != null){
-                boolean isConnected = info.isConnected();
-                return isConnected;
+                return info.isConnected();
             }
         }else{
             return false;

@@ -7,17 +7,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.View;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
@@ -30,23 +27,18 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = "MainActivity";
-    private NetworkClass networkClass;
-    private Context mContext;
-    private SignInButton signInButton;
-    private GoogleApiClient mGoogleApiClient;
+    private static final String TAG = "MainActivity";
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth mAuth;
-    private GoogleSignInAccount usersAccount;
     public static final String Garage_EXTRA = "MyGarage.Storer.account.extra";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_in);
-        networkClass = new NetworkClass();
-        mContext = this;
+        NetworkClass networkClass = new NetworkClass();
+        Context mContext = this;
         boolean hasConnection = networkClass.hasConnection(mContext);
 
 
@@ -63,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .requestEmail()
                     .build();
             mGoogleSignInClient = GoogleSignIn.getClient(this,googleSignInOptions);
-            signInButton = findViewById(R.id.googleSignInButton);
+            SignInButton signInButton = findViewById(R.id.googleSignInButton);
             signInButton.setOnClickListener(this);
         }
     }
@@ -107,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAuth.signInWithCredential(credential).addOnCompleteListener(this,task ->{
             if (task.isSuccessful()) {
                 Log.i(TAG, "firebaseAuthWithGoogle: Sign in It's Successful!");
-                usersAccount = account;
                 // lets proceed to our actual garage view
                 Intent garageIntent = new Intent(this,GarageActivity.class);
                 garageIntent.putExtra(Garage_EXTRA,account);

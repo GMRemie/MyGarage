@@ -1,7 +1,5 @@
 package com.storerjoseph.mygarage.Fragments;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,17 +28,11 @@ import javax.net.ssl.HttpsURLConnection;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 public class DetailFragment extends Fragment {
 
     private static final String ARG_VEHICLE = "mygarage.passed.vehicle";
     private Vehicle vehicle;
-    private Button shopforparts;
-    // CarMD API requirements
-    private String carMD_Endpoint = "https://api.carmd.com/v3.0/image?vin=";
-    private String carMD_Token = "523b9cded5df4cd8bb564364e3fe8971";
-    private String carMD_AuthKey = "Basic NjdhMWI4NDEtNTliYi00YTZjLWFhNTctYzBiNTFkZTYyNzAz";
 
     public static DetailFragment newInstance(Vehicle vehicle) {
         
@@ -59,7 +50,7 @@ public class DetailFragment extends Fragment {
         return inflater.inflate(R.layout.vehicle_details,container,false);
     }
 
-    Button.OnClickListener blistener = new Button.OnClickListener(){
+    private final Button.OnClickListener blistener = new Button.OnClickListener(){
         @Override
         public void onClick(View v) {
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragView,WebView.newInstance(vehicle)).addToBackStack("back").commit();
@@ -73,7 +64,7 @@ public class DetailFragment extends Fragment {
         Bundle arguments = getArguments();
         vehicle = (Vehicle) arguments.getSerializable(ARG_VEHICLE);
         getActivity().setTitle(vehicle.nickName);
-        shopforparts = getActivity().findViewById(R.id.shopForParts);
+        Button shopforparts = getActivity().findViewById(R.id.shopForParts);
         shopforparts.setOnClickListener(blistener);
         // update detail view
 
@@ -81,6 +72,8 @@ public class DetailFragment extends Fragment {
         // image
         NetworkClass networkClass = new NetworkClass();
         if (networkClass.hasConnection(getContext())){
+            // CarMD API requirements
+            String carMD_Endpoint = "https://api.carmd.com/v3.0/image?vin=";
             String urlAndVIN = carMD_Endpoint + vehicle.vinNumber;
             DataTask task = new DataTask();
             task.execute(urlAndVIN);
@@ -99,14 +92,14 @@ public class DetailFragment extends Fragment {
         carYear.setText(vehicle.year.toString());
         carMake.setText(vehicle.make);
         carModel.setText(vehicle.model);
-        if (vehicle.engine.toString() != "" || vehicle.engine.toString() != null){
+        if (vehicle.engine != "" || vehicle.engine != null){
             carEngine.setText(vehicle.engine);
         }
-        if (vehicle.trim.toString() != "" || vehicle.trim.toString() != null) {
+        if (vehicle.trim != "" || vehicle.trim != null) {
             carTrim.setText(vehicle.trim);
 
         }
-        if (vehicle.transmission.toString() != "" || vehicle.transmission.toString() != null) {
+        if (vehicle.transmission != "" || vehicle.transmission != null) {
             carTrans.setText(vehicle.transmission);
         }
 
@@ -119,8 +112,10 @@ public class DetailFragment extends Fragment {
             HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("content-type","application/json");
-            connection.setRequestProperty("authorization",carMD_AuthKey);
-            connection.setRequestProperty("partner-token",carMD_Token);
+            String carMD_AuthKey = "Basic NjdhMWI4NDEtNTliYi00YTZjLWFhNTctYzBiNTFkZTYyNzAz";
+            connection.setRequestProperty("authorization", carMD_AuthKey);
+            String carMD_Token = "523b9cded5df4cd8bb564364e3fe8971";
+            connection.setRequestProperty("partner-token", carMD_Token);
             connection.connect();
 
             InputStream is = connection.getInputStream();
