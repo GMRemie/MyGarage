@@ -2,9 +2,11 @@ package com.storerjoseph.mygarage.Fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,10 +24,21 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.storerjoseph.mygarage.NetworkClass;
 import com.storerjoseph.mygarage.R;
 import com.storerjoseph.mygarage.Vehicle;
 
+
+import org.apache.commons.io.IOUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +55,11 @@ public class AddFragment extends Fragment implements View.OnClickListener {
     private DatabaseReference dataRef;
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
+
+    // CarMD API requirements
+    private String carMD_Endpoint = "https://api.carmd.com/v3.0/decode?vin=";
+    private String carMD_Token = "523b9cded5df4cd8bb564364e3fe8971";
+    private String carMD_AuthKey = "Basic NjdhMWI4NDEtNTliYi00YTZjLWFhNTctYzBiNTFkZTYyNzAz";
 
     public static AddFragment newInstance(GoogleSignInAccount account) {
         
@@ -89,8 +107,7 @@ public class AddFragment extends Fragment implements View.OnClickListener {
             // Week 3 need to check to make sure the fields are filled accordingly
             EditText vehicleNick = getActivity().findViewById(R.id.vehicleNick);
             EditText vehicleVin = getActivity().findViewById(R.id.vehicleVIN);
-            Vehicle vehicle = new Vehicle(vehicleNick.getText().toString(),vehicleVin.getText().toString());
-            dataRef.child("vehicles").push().setValue(vehicle);
+            saveVehicle(vehicleNick.toString(),vehicleVin.getText().toString());
         }else{
             // get an image
             if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -104,6 +121,8 @@ public class AddFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -160,4 +179,107 @@ public class AddFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+
+
+    // SAVE
+
+    private void saveVehicle(String nickName, String VIN){
+        //dataRef.child("vehicles").push().setValue(vehicle);
+
+        // has connection?
+        NetworkClass networkClass = new NetworkClass();
+
+        if (networkClass.hasConnection(getContext())){
+
+            String urlAndVIN = carMD_Endpoint + VIN;
+            DataTask task = new DataTask();
+            task.execute(urlAndVIN);
+
+        }else{
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext())
+                    .setTitle("Network Error").setMessage("Error connecting to network. Please try again later")
+                    .setPositiveButton("OK",null);
+            alert.show();
+        }
+    }
+
+    private String getCarMDData(String stringUrl){
+        try {
+            URL url = new URL(stringUrl);
+            HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("content-type","application/json");
+            connection.setRequestProperty("authorization",carMD_AuthKey);
+            connection.setRequestProperty("partner-token",carMD_Token);
+            connection.connect();
+
+            InputStream is = connection.getInputStream();
+            String data = IOUtil.toString(is,"UTF-8");
+            is.close();
+            connection.disconnect();
+            return data;
+
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+
+        return null;
+    }
+
+    private class DataTask extends AsyncTask<String,Integer, Vehicle>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.i(TAG, "onPreExecute: Launched DataTask");
+        }
+
+        @Override
+        protected Vehicle doInBackground(String... strings) {
+            Log.i(TAG, "doInBackground: URL path" + strings[0]);
+            String data = getCarMDData(strings[0]);
+            try {
+                JSONObject outer = new JSONObject(data);
+                JSONObject vehdata = outer.getJSONObject("data");
+                Integer year = vehdata.getInt("year");
+                String make = vehdata.getString("make");
+                String model = vehdata.getString("model");
+                String engine = vehdata.getString("engine");
+                String trim = vehdata.getString("trim");
+                String transmission = vehdata.getString("transmission");
+                Vehicle loadedVehicle = new Vehicle(year,make,model,trim,transmission);
+                return loadedVehicle;
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Vehicle vehicle) {
+            super.onPostExecute(vehicle);
+            if (vehicle != null){
+                // we have a vehicle
+                Vehicle loadedVehicle = vehicle;
+                EditText nick = getActivity().findViewById(R.id.vehicleNick);
+                EditText vin = getActivity().findViewById(R.id.vehicleVIN);
+                loadedVehicle.nickName = nick.getText().toString();
+                loadedVehicle.vinNumber = vin.getText().toString();
+
+                Toast.makeText(getContext(),"Vehicle has been saved!",LENGTH_SHORT).show();
+                dataRef.child("vehicles").push().setValue(loadedVehicle);
+
+
+            }
+            else{
+                Toast.makeText(getContext(),"Error! Something went wrong!",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
 }

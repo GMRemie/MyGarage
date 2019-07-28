@@ -23,7 +23,7 @@ public class GarageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fab = findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         Intent launchedIntent = getIntent();
 
         if (launchedIntent.hasExtra(MainActivity.Garage_EXTRA)){
@@ -46,7 +46,13 @@ public class GarageActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setTitle("My Garage");
+        fab.show();
 
+    }
 
 
     FloatingActionButton.OnClickListener fabListener = new FloatingActionButton.OnClickListener(){
@@ -55,7 +61,7 @@ public class GarageActivity extends AppCompatActivity {
         public void onClick(View v) {
             Log.i(TAG, "onClick: Fab clicked + " + account.getEmail());
             getSupportFragmentManager().beginTransaction().add(R.id.fragView,AddFragment.newInstance(account)).addToBackStack("backstack").commit();
-            v.setVisibility(View.INVISIBLE);
+            fab.hide();
 
         }
     };

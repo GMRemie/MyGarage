@@ -30,9 +30,14 @@
         android:text="Scan VIN"
         />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
     <Button
         android:id="@+id/saveVehicle"
         style="@style/GarageTheme.Button"
         android:text="Save"/>
+
 
 </LinearLayout>
