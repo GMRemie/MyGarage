@@ -4,12 +4,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.storerjoseph.mygarage.NetworkClass;
 import com.storerjoseph.mygarage.R;
@@ -22,6 +31,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -32,14 +42,19 @@ import androidx.fragment.app.Fragment;
 public class DetailFragment extends Fragment {
 
     private static final String ARG_VEHICLE = "mygarage.passed.vehicle";
+    private static final String Garage_Account = "MyGarage.Storer.Account";
+    private DatabaseReference dataRef;
+    private List<Vehicle> vehicles;
+
     private Vehicle vehicle;
 
-    public static DetailFragment newInstance(Vehicle vehicle) {
+    public static DetailFragment newInstance(Vehicle vehicle, GoogleSignInAccount account) {
         
         Bundle args = new Bundle();
         
         DetailFragment fragment = new DetailFragment();
         args.putSerializable(ARG_VEHICLE,vehicle);
+        args.putParcelable(Garage_Account,account);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,16 +72,61 @@ public class DetailFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // only one menu item
+        dataRef.child("vehicles").addListenerForSingleValueEvent(vehListener);
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private final ValueEventListener vehListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            // Get Post object and use the values to update the UI
+
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                Vehicle svc = snapshot.getValue(Vehicle.class);
+                if (svc.vinNumber == vehicle.vinNumber){
+                    dataRef.child("vehicles").child(snapshot.getKey()).removeValue();
+                    // pop back
+                    getFragmentManager().popBackStack();
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
         vehicle = (Vehicle) arguments.getSerializable(ARG_VEHICLE);
+
+        GoogleSignInAccount account = arguments.getParcelable(Garage_Account);
+
+        // firebase setup
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        dataRef = database.getReference(account.getId());
+
+
+
         getActivity().setTitle(vehicle.nickName);
         Button shopforparts = getActivity().findViewById(R.id.shopForParts);
         shopforparts.setOnClickListener(blistener);
         // update detail view
+
+        setHasOptionsMenu(true);
 
 
         // image

@@ -63,6 +63,7 @@ public class GarageActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -124,7 +125,7 @@ public class GarageActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Vehicle selected = vehicles.get(position);
             fab.hide();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragView, DetailFragment.newInstance(selected)).addToBackStack("back").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragView, DetailFragment.newInstance(selected,account)).addToBackStack("back").commit();
         }
     };
 }
