@@ -2,7 +2,6 @@ package com.storerjoseph.mygarage.Fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
+import java.util.Objects;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -44,7 +43,6 @@ public class DetailFragment extends Fragment {
     private static final String ARG_VEHICLE = "mygarage.passed.vehicle";
     private static final String Garage_Account = "MyGarage.Storer.Account";
     private DatabaseReference dataRef;
-    private List<Vehicle> vehicles;
 
     private Vehicle vehicle;
 
@@ -68,7 +66,7 @@ public class DetailFragment extends Fragment {
     private final Button.OnClickListener blistener = new Button.OnClickListener(){
         @Override
         public void onClick(View v) {
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragView,WebView.newInstance(vehicle)).addToBackStack("back").commit();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fragView,WebView.newInstance(vehicle)).addToBackStack("back").commit();
         }
     };
 
@@ -86,6 +84,7 @@ public class DetailFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    // used for deletion
     private final ValueEventListener vehListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -93,10 +92,9 @@ public class DetailFragment extends Fragment {
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 Vehicle svc = snapshot.getValue(Vehicle.class);
-                if (svc.vinNumber == vehicle.vinNumber){
-                    dataRef.child("vehicles").child(snapshot.getKey()).removeValue();
-                    // pop back
-                    getFragmentManager().popBackStack();
+                if (Objects.equals(Objects.requireNonNull(svc).vinNumber, vehicle.vinNumber)){
+                    dataRef.child("vehicles").child(Objects.requireNonNull(snapshot.getKey())).removeValue();
+                    Objects.requireNonNull(getActivity()).onBackPressed();
                 }
             }
         }
@@ -111,17 +109,17 @@ public class DetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
-        vehicle = (Vehicle) arguments.getSerializable(ARG_VEHICLE);
+        vehicle = (Vehicle) Objects.requireNonNull(arguments).getSerializable(ARG_VEHICLE);
 
         GoogleSignInAccount account = arguments.getParcelable(Garage_Account);
 
         // firebase setup
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        dataRef = database.getReference(account.getId());
+        dataRef = database.getReference(Objects.requireNonNull(Objects.requireNonNull(account).getId()));
 
 
 
-        getActivity().setTitle(vehicle.nickName);
+        Objects.requireNonNull(getActivity()).setTitle(vehicle.nickName);
         Button shopforparts = getActivity().findViewById(R.id.shopForParts);
         shopforparts.setOnClickListener(blistener);
         // update detail view
@@ -152,14 +150,14 @@ public class DetailFragment extends Fragment {
         carYear.setText(vehicle.year.toString());
         carMake.setText(vehicle.make);
         carModel.setText(vehicle.model);
-        if (vehicle.engine != "" || vehicle.engine != null){
+        if (!Objects.equals(vehicle.engine, "") || vehicle.engine != null){
             carEngine.setText(vehicle.engine);
         }
-        if (vehicle.trim != "" || vehicle.trim != null) {
+        if (!Objects.equals(vehicle.trim, "") || vehicle.trim != null) {
             carTrim.setText(vehicle.trim);
 
         }
-        if (vehicle.transmission != "" || vehicle.transmission != null) {
+        if (!Objects.equals(vehicle.transmission, "") || vehicle.transmission != null) {
             carTrans.setText(vehicle.transmission);
         }
 
@@ -202,9 +200,7 @@ public class DetailFragment extends Fragment {
             try {
                 JSONObject outer = new JSONObject(data);
                 JSONObject vehdata = outer.getJSONObject("data");
-                String image_path = vehdata.getString("image");
-                Log.i("TAG", "doInBackground: AAA" + data);
-                return image_path;
+                return vehdata.getString("image");
 
             }catch (JSONException e){
                 e.printStackTrace();
@@ -215,11 +211,8 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String imagePath) {
-            Log.i("TAG", "onPostExecute: Loaded into post executed " + imagePath);
-            ImageView imgView = getActivity().findViewById(R.id.detailImage);
-            if ( imagePath.equals("") || imagePath == null){
-                // empty
-            }else {
+            ImageView imgView = Objects.requireNonNull(getActivity()).findViewById(R.id.detailImage);
+            if (!imagePath.equals("")){
                 Picasso.get().load(imagePath).into(imgView);
             }
 

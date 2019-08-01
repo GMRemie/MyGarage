@@ -10,6 +10,8 @@ import android.webkit.WebViewClient;
 import com.storerjoseph.mygarage.R;
 import com.storerjoseph.mygarage.Vehicle;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -43,13 +45,13 @@ public class WebView extends Fragment {
 
 
         Bundle args = getArguments();
-        Vehicle vehicle = (Vehicle) args.getSerializable(ARG_VEHICLE);
+        Vehicle vehicle = (Vehicle) Objects.requireNonNull(args).getSerializable(ARG_VEHICLE);
 
-        setupWebView(vehicle);
+        setupWebView(Objects.requireNonNull(vehicle));
     }
 
     private void setupWebView(Vehicle vehicle){
-        android.webkit.WebView webView = getActivity().findViewById(R.id.webViews);
+        android.webkit.WebView webView = Objects.requireNonNull(getActivity()).findViewById(R.id.webViews);
         String carIDUrl = "https://www.carid.com/";
         String actualUrl = carIDUrl + "/" + vehicle.year.toString() + "-" + vehicle.make + "-" + vehicle.model + "-accessories/";
 

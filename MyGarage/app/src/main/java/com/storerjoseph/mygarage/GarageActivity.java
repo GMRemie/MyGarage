@@ -3,7 +3,6 @@ package com.storerjoseph.mygarage;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -19,13 +18,14 @@ import com.storerjoseph.mygarage.Fragments.AddFragment;
 import com.storerjoseph.mygarage.Fragments.DetailFragment;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class GarageActivity extends AppCompatActivity {
 
     private GoogleSignInAccount account;
-    private static final String TAG = "GarageActivty";
     private FloatingActionButton fab;
     private ArrayList<Vehicle> vehicles;
     private ListView listView;
@@ -51,7 +51,7 @@ public class GarageActivity extends AppCompatActivity {
             fab.setOnClickListener(fabListener);
             // Load vehicles here
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference dataRef = database.getReference(account.getId()).child("vehicles");
+            DatabaseReference dataRef = database.getReference(Objects.requireNonNull(account.getId())).child("vehicles");
             dataRef.addValueEventListener(vehListener);
 
         }else{
@@ -79,7 +79,6 @@ public class GarageActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            Log.i(TAG, "onClick: Fab clicked + " + account.getEmail());
             getSupportFragmentManager().beginTransaction().replace(R.id.fragView,AddFragment.newInstance(account)).addToBackStack("back").commit();
             fab.hide();
         }
@@ -89,10 +88,8 @@ public class GarageActivity extends AppCompatActivity {
     private final ValueEventListener vehListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            vehicles.removeAll(vehicles);
-            Log.i(TAG, "onDataChange: On Data changed!");
+            vehicles.clear();
             // Get Post object and use the values to update the UI
-            Log.i(TAG, "onDataChange: Data changed " + dataSnapshot.getChildrenCount() );
 
             for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                 Vehicle vehicle = snapshot.getValue(Vehicle.class);
@@ -103,9 +100,8 @@ public class GarageActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCancelled(DatabaseError databaseError) {
+        public void onCancelled(@NonNull DatabaseError databaseError) {
             // Getting Post failed, log a message
-            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             // ...
         }
     };

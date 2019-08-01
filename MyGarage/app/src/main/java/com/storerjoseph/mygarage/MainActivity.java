@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -24,10 +23,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Objects;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "MainActivity";
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth mAuth;
@@ -82,10 +82,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
+                firebaseAuthWithGoogle(Objects.requireNonNull(account));
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
                 // ...
             }
         }
@@ -93,19 +92,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-        Log.i(TAG, "firebaseAuthWithGoogle: Auth with Google " + account.getEmail());
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
 
         mAuth.signInWithCredential(credential).addOnCompleteListener(this,task ->{
             if (task.isSuccessful()) {
-                Log.i(TAG, "firebaseAuthWithGoogle: Sign in It's Successful!");
                 // lets proceed to our actual garage view
                 Intent garageIntent = new Intent(this,GarageActivity.class);
                 garageIntent.putExtra(Garage_EXTRA,account);
                 startActivity(garageIntent);
-            }else{
-                Log.i(TAG, "firebaseAuthWithGoogle: Sign in failure");
-
             }
         });
     }
